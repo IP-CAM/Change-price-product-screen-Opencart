@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+    <name>Preço dinâmico na tela de produto</name>
+    <code>change-price-product-screen</code>
+    <version>1.0.0</version>
+    <author>Andre Lacomski</author>
+    <link>https://github.com/andrelacomski</link>
+
+    <file path="catalog/controller/product/product.php">
+        <operation>
+            <search>
+                <![CDATA[$this->document->setTitle($product_info['meta_title']);]]>
+            </search>
+            <add position="before">
+                <![CDATA[$this->document->addScript('catalog/view/javascript/change-price-product.js');]]>
+            </add>
+        </operation>
+		<operation>
+            <search>
+                <![CDATA[$data['header'] = $this->load->controller('common/header');]]>
+            </search>
+            <add position="after">
+                <![CDATA[$data['currency'] = $this->session->data['currency'];]]>
+            </add>
+        </operation>
+    </file>
+
+    <file path="catalog/view/theme/*/template/product/product.twig">
+        <operation>
+            <search>
+                <![CDATA[{{ footer }}]]>
+            </search>
+            <add position="after">
+                <![CDATA[
+                <script type="text/javascript"><!--
+                $(document).ready(() => {
+                    calculatePrice({{ options|json_encode() }}, `{{ currency }}`, transformPriceInFloat('{{ price }}'), transformPriceInFloat('{{ special }}'));
+                    addChangeEvents({{ options|json_encode() }}, `{{ currency }}`, transformPriceInFloat('{{ price }}'), transformPriceInFloat('{{ special }}'));
+                });
+                //--></script>
+                ]]>
+            </add>
+        </operation>
+    </file>
+</modification>
